@@ -5,4 +5,5 @@
     addr: string;
     lat: number;
     lng: number;
+    distance: number;
     }

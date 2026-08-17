@@ -9,16 +9,21 @@ declare global {
 
 export default function MapPage() {
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
 
   useEffect(() => {
-    const initMap = (lat: number, lng: number) => {
-      if (!mapRef.current) return;
-      const map = new window.naver.maps.Map(mapRef.current, {
-        center: new window.naver.maps.LatLng(lat, lng),
-        zoom: 15,
-      });
+    const clearMarkers = () => {
+      markersRef.current.forEach((marker) => marker.setMap(null));
+      markersRef.current = [];
+    };
+
+    const refreshMarkers = (lat: number, lng: number) => {
+      const map = mapInstanceRef.current;
+      if (!map) return;
 
       fetchNearbyFacilities(lat, lng).then((facilities) => {
+        clearMarkers();
         facilities.forEach((facility) => {
           const marker = new window.naver.maps.Marker({
             position: new window.naver.maps.LatLng(facility.lat, facility.lng),
@@ -40,12 +45,35 @@ export default function MapPage() {
               infoWindow.open(map, marker);
             }
           });
+
+          markersRef.current.push(marker);
         });
       });
     };
 
-    const loadMapWithLocation = () => {
-      navigator.geolocation.getCurrentPosition(
+    const initMap = (lat: number, lng: number) => {
+      if (!mapRef.current) return;
+      const center = new window.naver.maps.LatLng(lat, lng);
+
+      if (!mapInstanceRef.current) {
+        mapInstanceRef.current = new window.naver.maps.Map(mapRef.current, {
+          center,
+          zoom: 15,
+        });
+
+        window.naver.maps.Event.addListener(mapInstanceRef.current, "dragend", () => {
+          const newCenter = mapInstanceRef.current.getCenter();
+          refreshMarkers(newCenter.lat(), newCenter.lng());
+        });
+      } else {
+        mapInstanceRef.current.setCenter(center);
+      }
+
+      refreshMarkers(lat, lng);
+    };
+
+    const startWatching = () => {
+      return navigator.geolocation.watchPosition(
         (position) => {
           initMap(position.coords.latitude, position.coords.longitude);
         },
@@ -55,15 +83,24 @@ export default function MapPage() {
       );
     };
 
+    let watchId: number | null = null;
+
     if (window.naver) {
-      loadMapWithLocation();
-      return;
+      watchId = startWatching();
+    } else {
+      const script = document.createElement("script");
+      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`;
+      script.onload = () => {
+        watchId = startWatching();
+      };
+      document.head.appendChild(script);
     }
 
-    const script = document.createElement("script");
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}`;
-    script.onload = loadMapWithLocation;
-    document.head.appendChild(script);
+    return () => {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
   }, []);
 
   return <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />;

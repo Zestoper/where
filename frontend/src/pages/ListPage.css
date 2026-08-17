@@ -1,0 +1,80 @@
+.list-page {
+  height: 100%;
+  overflow-y: auto;
+  padding: 76px 12px 24px;
+  background: var(--bg);
+}
+
+.list-page__empty {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 40px;
+  font-size: 14px;
+}
+
+.facility-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+.facility-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.facility-card__icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.facility-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.facility-card__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.facility-card__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.facility-card__distance {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.facility-card__addr {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

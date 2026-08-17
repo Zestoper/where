@@ -8,5 +8,6 @@ class LocationOut(BaseModel):
     addr: str
     lat: float
     lng: float
-
+    distance: float
+    
     model_config = ConfigDict(from_attributes=True)
