@@ -33,3 +33,13 @@ CREATE TABLE favorite(
     create_at TIMESTAMPTZ(6) NOT NULL DEFAULT now(),
     UNIQUE (location_id, device_id)
 );
+
+
+CREATE TABLE "user"(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    nickname VARCHAR(30) NOT NULL,
+    password_hash VARCHAR(60) NOT NULL,
+    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ(6) NOT NULL DEFAULT now()
+);

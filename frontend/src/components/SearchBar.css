@@ -1,0 +1,120 @@
+.search-bar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: 999px;
+  height: 40px;
+  width: 40px;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.search-bar.expanded {
+  width: min(280px, calc(100vw - 32px));
+  cursor: text;
+}
+
+.search-bar__icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.search-bar.expanded .search-bar__icon,
+.search-bar.has-selection .search-bar__icon {
+  color: var(--accent);
+}
+
+.search-bar__input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  min-width: 0;
+  transition: width 0.3s, opacity 0.3s;
+}
+
+.search-bar:not(.expanded) .search-bar__input {
+  width: 0;
+  opacity: 0;
+  padding: 0;
+}
+
+.search-bar.expanded .search-bar__input {
+  width: 100%;
+  opacity: 1;
+  padding-right: 8px;
+}
+
+.search-bar__close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin-right: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.search-bar__close:hover {
+  background: var(--accent-bg);
+}
+
+.search-bar__results {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(280px, calc(100vw - 32px));
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-bar__status {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.search-bar__result {
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-bar__result:hover {
+  background: var(--accent-bg);
+}

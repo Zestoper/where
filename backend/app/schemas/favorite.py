@@ -13,3 +13,13 @@ class FavoriteOut(BaseModel):
     create_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class FavoriteLocationOut(BaseModel):
+    id: uuid.UUID
+    category: str
+    lname: str
+    addr: str
+    lat: float
+    lng: float
+
+    model_config = ConfigDict(from_attributes=True)

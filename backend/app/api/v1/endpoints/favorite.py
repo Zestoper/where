@@ -1,11 +1,31 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import cast
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from geoalchemy2 import Geometry
+from geoalchemy2.functions import ST_X, ST_Y
 from app.core.database import get_db
 from app.models.favorite import Favorite
-from app.schemas.favorite import FavoriteCreate, FavoriteOut
+from app.models.location import Location
+from app.schemas.favorite import FavoriteCreate, FavoriteOut, FavoriteLocationOut
 
 router = APIRouter()
+
+@router.get("/detailed", response_model=list[FavoriteLocationOut])
+def list_favorite_locations(device_id: str, db: Session = Depends(get_db)):
+    return (
+        db.query(
+            Location.id,
+            Location.category,
+            Location.lname,
+            Location.addr,
+            ST_Y(cast(Location.postgis, Geometry)).label("lat"),
+            ST_X(cast(Location.postgis, Geometry)).label("lng"),
+        )
+        .join(Favorite, Favorite.location_id == Location.id)
+        .filter(Favorite.device_id == device_id)
+        .all()
+    )
 
 @router.post("/", response_model=FavoriteOut)
 def add_favorite(payload: FavoriteCreate, db: Session = Depends(get_db)):
