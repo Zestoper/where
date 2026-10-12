@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { verifyEmail, getMe } from "../api/auth";
 import { getStoredAuth, setStoredAuth, broadcastAuthChange } from "../utils/auth";
+import { CircleCheck, TriangleAlert } from "lucide-react";
 
 export default function VerifyEmailPage() {
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
@@ -53,14 +54,14 @@ export default function VerifyEmailPage() {
         {status === "loading" && <p>인증 확인 중...</p>}
         {status === "success" && (
           <>
-            <p style={{ fontSize: 32, marginBottom: 8 }}>✅</p>
+            <p style={{ fontSize: 32, marginBottom: 8 }}><CircleCheck size="1em" /></p>
             <p>{message}</p>
             <p style={{ color: "var(--text-muted)", fontSize: 13 }}>이 창은 닫으셔도 돼요.</p>
           </>
         )}
         {status === "error" && (
           <>
-            <p style={{ fontSize: 32, marginBottom: 8 }}>⚠️</p>
+            <p style={{ fontSize: 32, marginBottom: 8 }}><TriangleAlert size="1em" /></p>
             <p>{message}</p>
           </>
         )}

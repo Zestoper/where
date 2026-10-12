@@ -9,6 +9,7 @@ import type { Facility } from "./types/facility";
 import { getStoredAuth, setStoredAuth, clearStoredAuth, subscribeAuthChange } from "./utils/auth";
 import { getMe, resendVerification } from "./api/auth";
 import "./App.css";
+import { MapPin, X } from "lucide-react";
 
 interface SearchCenter {
   lat: number;
@@ -121,8 +122,8 @@ function App() {
         </div>
         {searchCenter && (
           <div className="active-search-chip">
-            <span>📍 {searchCenter.address}</span>
-            <button onClick={() => setSearchCenter(null)}>✕</button>
+            <span><MapPin size="1em" /> {searchCenter.address}</span>
+            <button onClick={() => setSearchCenter(null)}><X size="1em" /></button>
           </div>
         )}
       </div>

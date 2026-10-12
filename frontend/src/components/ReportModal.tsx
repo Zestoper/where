@@ -48,7 +48,7 @@ export default function ReportModal({ target, onClose }: ReportModalProps) {
       <div className="report-modal" onClick={(e) => e.stopPropagation()}>
         {done ? (
           <>
-            <p className="report-modal__done">제보 감사합니다 🙏</p>
+            <p className="report-modal__done">제보 감사합니다</p>
             <button className="report-modal__submit" onClick={handleClose}>
               닫기
             </button>

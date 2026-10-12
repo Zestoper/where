@@ -4,6 +4,7 @@ import { listFavorites, listFavoriteLocations, addFavorite, removeFavorite } fro
 import { getFavoritesKey } from "../utils/device";
 import type { Facility } from "../types/facility";
 import "./ListPage.css";
+import { Star } from "lucide-react";
 
 interface ListPageProps {
   selectedCategories: string[];
@@ -71,7 +72,7 @@ export default function ListPage({ selectedCategories, searchCenter, onReport, a
         className={`list-page__favorites-toggle ${showFavoritesOnly ? "active" : ""}`}
         onClick={() => setShowFavoritesOnly((prev) => !prev)}
       >
-        {showFavoritesOnly ? "★ 즐겨찾기만 보는 중" : "☆ 즐겨찾기만 보기"}
+        <Star size="1em" fill={showFavoritesOnly ? "currentColor" : "none"} /> {showFavoritesOnly ? "즐겨찾기만 보는 중" : "즐겨찾기만 보기"}
       </button>
       {visibleFacilities.length === 0 && (
         <p className="list-page__empty">
@@ -100,7 +101,7 @@ export default function ListPage({ selectedCategories, searchCenter, onReport, a
                 onClick={() => toggleFavorite(facility)}
                 aria-label="즐겨찾기"
               >
-                {favoriteIds.has(facility.id) ? "★" : "☆"}
+                <Star size="1em" fill={favoriteIds.has(facility.id) ? "currentColor" : "none"} />
               </button>
               <button className="facility-card__report" onClick={() => onReport(facility)}>
                 제보
