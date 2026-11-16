@@ -3,7 +3,7 @@ import MapPage from "./pages/MapPage";
 import ListPage from "./pages/ListPage";
 import SearchBar from "./components/SearchBar";
 import ReportModal from "./components/ReportModal";
-import AuthModal from "./components/AuthModal";
+import AuthModal, { migrateAnonymousFavorites } from "./components/AuthModal";
 import { CATEGORIES } from "./constants/categories";
 import type { Facility } from "./types/facility";
 import { getStoredAuth, setStoredAuth, clearStoredAuth, subscribeAuthChange } from "./utils/auth";
@@ -25,6 +25,7 @@ function App() {
   const [authUser, setAuthUser] = useState(() => getStoredAuth()?.user ?? null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [resent, setResent] = useState(false);
+  const [oauthError, setOauthError] = useState<string | null>(null);
 
   const handleAuthClick = () => {
     if (authUser) {
@@ -45,6 +46,31 @@ function App() {
       })
       .catch(() => {});
   };
+
+  // 구글/카카오 로그인 후 백엔드가 /#oauth_token=... (성공) 또는 /?oauth_error=... (실패) 로 돌려보낸다
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.hash.slice(1)).get("oauth_token");
+    const failed = new URLSearchParams(window.location.search).get("oauth_error");
+    if (!token && !failed) return;
+    // 주소창에서 토큰·안내 문구를 지운다 (뒤로가기·복사로 새지 않게)
+    window.history.replaceState(null, "", window.location.pathname);
+
+    if (!token) {
+      setOauthError(failed);
+      setAuthModalOpen(true);
+      return;
+    }
+    getMe(token)
+      .then(async (user) => {
+        setStoredAuth(token, user);
+        await migrateAnonymousFavorites(user.id);
+        setAuthUser(user);
+      })
+      .catch(() => {
+        setOauthError("로그인에 실패했어요. 다시 시도해주세요");
+        setAuthModalOpen(true);
+      });
+  }, []);
 
   // 다른 탭에서 이메일 인증이 끝나면 즉시 반영
   useEffect(() => subscribeAuthChange(refreshMe), []);
@@ -146,10 +172,15 @@ function App() {
       <ReportModal target={reportTarget} onClose={() => setReportTarget(null)} />
       <AuthModal
         open={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
+        notice={oauthError}
+        onClose={() => {
+          setAuthModalOpen(false);
+          setOauthError(null);
+        }}
         onAuthed={(user) => {
           setAuthUser(user);
           setAuthModalOpen(false);
+          setOauthError(null);
         }}
       />
     </div>

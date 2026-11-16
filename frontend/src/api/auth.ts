@@ -13,6 +13,11 @@ export interface AuthResponse {
   user: AuthUser;
 }
 
+// 구글/카카오 로그인 시작 주소 — 버튼을 누르면 이 주소로 이동하고, 백엔드가 로그인 화면으로 보내준다
+export function socialLoginUrl(provider: "kakao" | "google"): string {
+  return `${BASE_URL}/${provider}/login`;
+}
+
 async function handleJson(response: Response) {
   if (!response.ok) {
     const body = await response.json().catch(() => null);
